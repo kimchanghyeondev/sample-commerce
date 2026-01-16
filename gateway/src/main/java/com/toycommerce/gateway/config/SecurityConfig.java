@@ -24,11 +24,13 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource))
                 .csrf(ServerHttpSecurity.CsrfSpec::disable)
                 .authorizeExchange(exchanges -> exchanges
-                        // 공개 경로 (인증 불필요)
-                        .pathMatchers("/api/auth/**", "/api/categories/**", "/api/category-product-templates/**", "/api/product-templates/**", "/actuator/**").permitAll()
+                        // 인증 API (공개)
+                        .pathMatchers("/api/auth/**").permitAll()
+                        // 헬스체크 (공개)
+                        .pathMatchers("/actuator/**").permitAll()
                         // ADMIN 전용 경로 (ADMIN 권한 필요)
                         .pathMatchers("/api/admin/**").hasRole("ADMIN")
-                        // USER 경로 (인증된 사용자 모두 접근 가능 - USER 또는 ADMIN)
+                        // USER 경로 (USER 또는 ADMIN 권한 필요)
                         .pathMatchers("/api/user/**").hasAnyRole("USER", "ADMIN")
                         // 나머지 모든 경로는 인증 필요
                         .anyExchange().authenticated()
