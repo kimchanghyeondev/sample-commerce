@@ -1,6 +1,7 @@
 package com.toycommerce.user.config;
 
 import com.toycommerce.common.entity.user.Role;
+import com.toycommerce.common.entity.user.User;
 import com.toycommerce.common.entity.category.Category;
 import com.toycommerce.common.entity.category.CategoryProductTemplateMapping;
 import com.toycommerce.common.entity.product.ProductTemplate;
@@ -14,7 +15,10 @@ import com.toycommerce.user.repository.ProductTemplateRepository;
 import com.toycommerce.user.repository.ProductRepository;
 import com.toycommerce.user.repository.ProductOptionGroupRepository;
 import com.toycommerce.user.repository.ProductOptionRepository;
+import com.toycommerce.user.repository.CartRepository;
 import com.toycommerce.user.service.UserService;
+import com.toycommerce.common.entity.cart.Cart;
+import com.toycommerce.common.entity.cart.CartItem;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -35,6 +39,7 @@ public class DataInitializer {
     private final CategoryProductTemplateMappingRepository categoryProductTemplateMappingRepository;
     private final ProductOptionGroupRepository productOptionGroupRepository;
     private final ProductOptionRepository productOptionRepository;
+    private final CartRepository cartRepository;
 
     @PostConstruct
     @Transactional
@@ -44,6 +49,7 @@ public class DataInitializer {
         initProductTemplates();
         initProducts();
         initProductOptions();
+        initCart();
     }
 
     private void initUsers() {
@@ -404,7 +410,7 @@ public class DataInitializer {
                     ProductOptionGroup newGroup = ProductOptionGroup.builder()
                             .product(product)
                             .name(groupName)
-                            .entityStatus(EntityStatus.ACTIVE)
+                            .status(EntityStatus.ACTIVE)
                             .build();
                     ProductOptionGroup saved = productOptionGroupRepository.save(newGroup);
                     log.info("ProductOptionGroup created: {} for {}", groupName, product.getName());
@@ -417,11 +423,57 @@ public class DataInitializer {
                 ProductOption option = ProductOption.builder()
                         .productOptionGroup(optionGroup)
                         .name(optionName)
-                        .entityStatus(EntityStatus.ACTIVE)
+                        .status(EntityStatus.ACTIVE)
                         .build();
                 productOptionRepository.save(option);
                 log.info("ProductOption created: {} for {} in group {}", optionName, product.getName(), groupName);
             }
+        }
+    }
+
+    private void initCart() {
+        try {
+            User user = userService.findByUsername("user")
+                    .orElseThrow(() -> new RuntimeException("User 'user' not found"));
+
+            // 기존 장바구니가 있으면 스킵
+            if (cartRepository.existsByUser(user)) {
+                log.info("Cart already exists for user: user");
+                return;
+            }
+
+            // ProductOption 2개 조회 (최소 2개가 있어야 함)
+            List<ProductOption> productOptions = productOptionRepository.findAll();
+            if (productOptions.size() < 2) {
+                log.warn("Not enough ProductOptions found. Need at least 2, found: {}", productOptions.size());
+                return;
+            }
+
+            // 장바구니 생성
+            Cart cart = cartRepository.save(Cart.builder()
+                    .user(user)
+                    .build());
+
+            // 장바구니 아이템 2개 추가
+            CartItem cartItem1 = CartItem.builder()
+                    .cart(cart)
+                    .productOption(productOptions.get(0))
+                    .quantity(1)
+                    .build();
+
+            CartItem cartItem2 = CartItem.builder()
+                    .cart(cart)
+                    .productOption(productOptions.get(1))
+                    .quantity(2)
+                    .build();
+
+            cart.getCartItems().add(cartItem1);
+            cart.getCartItems().add(cartItem2);
+
+            cartRepository.save(cart);
+            log.info("Cart initialized with 2 items for user: user");
+        } catch (Exception e) {
+            log.error("Failed to initialize cart", e);
         }
     }
 }
