@@ -23,14 +23,12 @@ public class DataInitializer {
 
     private void initUsers() {
         try {
-            if (!userService.existsByUsername("admin")) {
-                userService.createUser("admin", "admin", Role.ADMIN);
-                log.info("Admin user created: admin/admin");
-            }
-            if (!userService.existsByUsername("user")) {
-                userService.createUser("user", "user", Role.USER);
-                log.info("User created: user/user");
-            }
+            // 기존 계정이 있어도 비밀번호를 업데이트합니다
+            userService.createOrUpdateUser("admin", "admin", Role.ADMIN);
+            log.info("Admin user initialized: admin/admin");
+            
+            userService.createOrUpdateUser("user", "user", Role.USER);
+            log.info("User initialized: user/user");
         } catch (Exception e) {
             log.error("Failed to initialize users", e);
         }
