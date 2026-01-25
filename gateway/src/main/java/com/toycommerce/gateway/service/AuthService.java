@@ -22,14 +22,14 @@ public class AuthService {
             // 사용자 조회
             User user = userService.findByUsername(username)
                     .orElseThrow(() -> {
-                        log.error("Category not found: {}", username);
+                        log.error("User not found: {}", username);
                         return new RuntimeException("Invalid credentials");
                     });
 
             // 사용자 활성화 여부 확인
             if (!user.getEnabled()) {
-                log.error("Category is disabled: {}", username);
-                throw new RuntimeException("Category is disabled");
+                log.error("User is disabled: {}", username);
+                throw new RuntimeException("User is disabled");
             }
 
             // 비밀번호 검증

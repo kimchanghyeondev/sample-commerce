@@ -1,4 +1,4 @@
-package com.toycommerce.gateway.dto;
+package com.toycommerce.user.dto;
 
 import lombok.Builder;
 import lombok.Data;
@@ -12,8 +12,20 @@ public class ProductTemplateDetailDto {
     private String name;
     private String description;
     private String status;
-    private List<ProductOptionGroupDto> optionGroups;
+    private List<ProductInfoDto> products;
     private List<CategoryInfoDto> categories;
+    
+    @Data
+    @Builder
+    public static class ProductInfoDto {
+        private Long productId;
+        private String productName;
+        private String productDescription;
+        private String sku;
+        private Integer price;
+        private Integer stock;
+        private String status;
+    }
     
     @Data
     @Builder

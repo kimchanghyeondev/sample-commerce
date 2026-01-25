@@ -21,8 +21,8 @@ public class ProductOptionGroup extends BaseEntity {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "product_template_id", nullable = false, updatable = false)
-    private ProductTemplate productTemplate;
+    @JoinColumn(name = "product_id", nullable = false, updatable = false)
+    private Product product;
 
     @Column(name = "name", nullable = false)
     private String name;

@@ -1,4 +1,4 @@
-package com.toycommerce.gateway.repository;
+package com.toycommerce.user.repository;
 
 import com.toycommerce.common.entity.category.CategoryProductTemplateMapping;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -31,5 +31,11 @@ public interface CategoryProductTemplateMappingRepository extends JpaRepository<
            "WHERE c.parent.id = :parentCategoryId " +
            "ORDER BY c.displayOrder ASC, m.sortOrder ASC")
     List<CategoryProductTemplateMapping> findByParentCategoryIdWithDetails(@Param("parentCategoryId") Long parentCategoryId);
+    
+    @Query("SELECT m FROM CategoryProductTemplateMapping m " +
+           "WHERE m.category = :category AND m.productTemplate = :productTemplate")
+    java.util.Optional<CategoryProductTemplateMapping> findByCategoryAndProductTemplate(
+            @Param("category") com.toycommerce.common.entity.category.Category category,
+            @Param("productTemplate") com.toycommerce.common.entity.product.ProductTemplate productTemplate);
 }
 

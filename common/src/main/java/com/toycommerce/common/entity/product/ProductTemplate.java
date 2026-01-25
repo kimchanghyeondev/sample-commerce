@@ -30,8 +30,9 @@ public class ProductTemplate extends BaseEntity {
     @OneToMany(mappedBy = "productTemplate", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CategoryProductTemplateMapping> categories;
 
+    @OneToMany(mappedBy = "productTemplate", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Product> products;
+
     @Enumerated(EnumType.STRING)
     private EntityStatus status;
-
-
 }

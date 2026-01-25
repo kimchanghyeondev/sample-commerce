@@ -1,4 +1,4 @@
-package com.toycommerce.gateway.dto;
+package com.toycommerce.user.dto;
 
 import com.toycommerce.common.entity.category.Category;
 import lombok.AllArgsConstructor;

@@ -1,4 +1,4 @@
-package com.toycommerce.gateway.repository;
+package com.toycommerce.user.repository;
 
 import com.toycommerce.common.entity.product.ProductOption;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -9,9 +9,8 @@ import java.util.Optional;
 
 @Repository
 public interface ProductOptionRepository extends JpaRepository<ProductOption, Long> {
-    List<ProductOption> findByProductTemplateId(Long productTemplateId);
     List<ProductOption> findByProductOptionGroupId(Long productOptionGroupId);
-    Optional<ProductOption> findByProductTemplateIdAndName(Long productTemplateId, String name);
-    boolean existsByProductTemplateIdAndName(Long productTemplateId, String name);
+    Optional<ProductOption> findByProductOptionGroupIdAndName(Long productOptionGroupId, String name);
+    boolean existsByProductOptionGroupIdAndName(Long productOptionGroupId, String name);
 }
 

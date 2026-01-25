@@ -1,8 +1,6 @@
 package com.toycommerce.common.entity.product;
 
 import com.toycommerce.common.entity.BaseEntity;
-import com.toycommerce.common.entity.category.Category;
-import com.toycommerce.common.entity.category.CategoryProductTemplateMapping;
 import com.toycommerce.common.entity.enums.EntityStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -28,13 +26,25 @@ public class Product extends BaseEntity {
     @JoinColumn(name = "product_template_id", nullable = false, updatable = false)
     private ProductTemplate productTemplate;
 
-    private String sku; // TS-BLK-S
+    @Column(name = "name", nullable = false)
+    private String name; // 예: "갈치조림", "갈치튀김"
 
-    private int price;
+    @Column(name = "description")
+    private String description;
 
-    private int stock;
+    @Column(name = "sku", unique = true)
+    private String sku; // 예: "GALCHI-JORIM-001"
 
+    @Column(name = "price", nullable = false)
+    private Integer price;
 
+    @Column(name = "stock", nullable = false)
+    private Integer stock;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status")
+    private EntityStatus status;
 
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ProductOptionGroup> optionGroups;
 }

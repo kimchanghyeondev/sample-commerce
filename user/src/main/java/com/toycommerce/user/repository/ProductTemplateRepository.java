@@ -1,4 +1,4 @@
-package com.toycommerce.gateway.repository;
+package com.toycommerce.user.repository;
 
 import com.toycommerce.common.entity.product.ProductTemplate;
 import org.springframework.data.jpa.repository.JpaRepository;

@@ -1,10 +1,10 @@
-package com.toycommerce.gateway.service;
+package com.toycommerce.user.service;
 
 import com.toycommerce.common.entity.category.CategoryProductTemplateMapping;
-import com.toycommerce.gateway.dto.CategoryProductTemplateDto;
-import com.toycommerce.gateway.dto.CategoryWithProductTemplatesDto;
-import com.toycommerce.gateway.dto.ProductTemplateDto;
-import com.toycommerce.gateway.repository.CategoryProductTemplateMappingRepository;
+import com.toycommerce.user.dto.CategoryProductTemplateDto;
+import com.toycommerce.user.dto.CategoryWithProductTemplatesDto;
+import com.toycommerce.user.dto.ProductTemplateDto;
+import com.toycommerce.user.repository.CategoryProductTemplateMappingRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

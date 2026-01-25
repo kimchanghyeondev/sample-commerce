@@ -1,8 +1,8 @@
-package com.toycommerce.gateway.service;
+package com.toycommerce.user.service;
 
 import com.toycommerce.common.entity.category.Category;
-import com.toycommerce.gateway.dto.CategoryDto;
-import com.toycommerce.gateway.repository.CategoryRepository;
+import com.toycommerce.user.dto.CategoryDto;
+import com.toycommerce.user.repository.CategoryRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
