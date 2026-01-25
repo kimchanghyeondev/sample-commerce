@@ -22,3 +22,15 @@ jwt:
   secret: your-256-bit-secret-key-for-hmac-sha256-algorithm-minimum-32-characters
   expiration: 86400000
 
+# Swagger/OpenAPI 설정
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+    tags-sorter: alpha
+    operations-sorter: alpha
+  api-docs:
+    path: /v3/api-docs
+  show-actuator: false
+  default-consumes-media-type: application/json
+  default-produces-media-type: application/json
+
