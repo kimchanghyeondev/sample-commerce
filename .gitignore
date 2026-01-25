@@ -40,3 +40,6 @@ out/
 *.mv.db
 *.trace.db
 
+
+# Uploaded files
+uploads/
