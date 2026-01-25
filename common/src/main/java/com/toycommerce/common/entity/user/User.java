@@ -30,7 +30,8 @@ public class User extends BaseEntity {
     private Role role;
 
     @Column(nullable = false)
-    private Boolean enabled;
+    @Builder.Default
+    private Boolean enabled = true;
 
     public void updatePassword(String password) {
         this.password = password;

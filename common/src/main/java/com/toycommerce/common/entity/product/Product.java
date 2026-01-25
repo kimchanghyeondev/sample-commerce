@@ -8,6 +8,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -43,8 +44,30 @@ public class Product extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
-    private EntityStatus status;
+    @Builder.Default
+    private EntityStatus status = EntityStatus.ACTIVE;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ProductOptionGroup> optionGroups;
+    @Builder.Default
+    private List<ProductOptionGroup> optionGroups = new ArrayList<>();
+
+    public void updateName(String name) {
+        this.name = name;
+    }
+
+    public void updateDescription(String description) {
+        this.description = description;
+    }
+
+    public void updatePrice(Integer price) {
+        this.price = price;
+    }
+
+    public void updateStock(Integer stock) {
+        this.stock = stock;
+    }
+
+    public void updateStatus(EntityStatus status) {
+        this.status = status;
+    }
 }

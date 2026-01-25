@@ -9,6 +9,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -23,16 +24,34 @@ public class ProductTemplate extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "name", nullable = false)
     private String name;
 
+    @Column(name = "description", length = 1000)
     private String description;
 
     @OneToMany(mappedBy = "productTemplate", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<CategoryProductTemplateMapping> categories;
+    @Builder.Default
+    private List<CategoryProductTemplateMapping> categories = new ArrayList<>();
 
     @OneToMany(mappedBy = "productTemplate", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Product> products;
+    @Builder.Default
+    private List<Product> products = new ArrayList<>();
 
     @Enumerated(EnumType.STRING)
-    private EntityStatus status;
+    @Column(name = "status")
+    @Builder.Default
+    private EntityStatus status = EntityStatus.ACTIVE;
+
+    public void updateName(String name) {
+        this.name = name;
+    }
+
+    public void updateDescription(String description) {
+        this.description = description;
+    }
+
+    public void updateStatus(EntityStatus status) {
+        this.status = status;
+    }
 }

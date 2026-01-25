@@ -28,6 +28,15 @@ public class ProductOption extends BaseEntity {
     private String name;
 
     @Enumerated(EnumType.STRING)
-    private EntityStatus entityStatus;
+    @Column(name = "status")
+    @Builder.Default
+    private EntityStatus status = EntityStatus.ACTIVE;
 
+    public void updateName(String name) {
+        this.name = name;
+    }
+
+    public void updateStatus(EntityStatus status) {
+        this.status = status;
+    }
 }

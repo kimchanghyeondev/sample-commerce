@@ -29,7 +29,8 @@ public class CategoryProductTemplateMapping extends BaseEntity {
     @JoinColumn(name = "product_template_id")
     private ProductTemplate productTemplate;
 
-    // 확장 가능
-    private int sortOrder;
+    @Column(name = "sort_order", nullable = false)
+    @Builder.Default
+    private Integer sortOrder = 0;
 
 }
