@@ -5,6 +5,7 @@ import com.toycommerce.user.dto.CategoryProductTemplateDto;
 import com.toycommerce.user.dto.CategoryWithProductTemplatesDto;
 import com.toycommerce.user.dto.ProductTemplateDto;
 import com.toycommerce.user.repository.CategoryProductTemplateMappingRepository;
+import com.toycommerce.user.repository.ProductTemplateAttachmentRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -20,17 +21,25 @@ import java.util.stream.Collectors;
 public class CategoryProductTemplateService {
 
     private final CategoryProductTemplateMappingRepository mappingRepository;
+    private final ProductTemplateAttachmentRepository productTemplateAttachmentRepository;
 
     @Transactional(readOnly = true)
     public List<CategoryProductTemplateDto> getByCategoryId(Long categoryId) {
         List<CategoryProductTemplateMapping> mappings = mappingRepository.findByCategoryIdWithDetails(categoryId);
         return mappings.stream()
-                .map(mapping -> CategoryProductTemplateDto.from(
-                        mapping.getCategory(),
-                        mapping.getProductTemplate(),
-                        mapping.getId(),
-                        mapping.getSortOrder()
-                ))
+                .map(mapping -> {
+                    String primaryImageUrl = productTemplateAttachmentRepository
+                            .findPrimaryByTemplateId(mapping.getProductTemplate().getId())
+                            .map(pa -> pa.getAttachment().getFileUrl())
+                            .orElse(null);
+                    return CategoryProductTemplateDto.from(
+                            mapping.getCategory(),
+                            mapping.getProductTemplate(),
+                            mapping.getId(),
+                            mapping.getSortOrder(),
+                            primaryImageUrl
+                    );
+                })
                 .collect(Collectors.toList());
     }
 
@@ -38,12 +47,19 @@ public class CategoryProductTemplateService {
     public List<CategoryProductTemplateDto> getAllEnabled() {
         List<CategoryProductTemplateMapping> mappings = mappingRepository.findAllEnabledWithDetails();
         return mappings.stream()
-                .map(mapping -> CategoryProductTemplateDto.from(
-                        mapping.getCategory(),
-                        mapping.getProductTemplate(),
-                        mapping.getId(),
-                        mapping.getSortOrder()
-                ))
+                .map(mapping -> {
+                    String primaryImageUrl = productTemplateAttachmentRepository
+                            .findPrimaryByTemplateId(mapping.getProductTemplate().getId())
+                            .map(pa -> pa.getAttachment().getFileUrl())
+                            .orElse(null);
+                    return CategoryProductTemplateDto.from(
+                            mapping.getCategory(),
+                            mapping.getProductTemplate(),
+                            mapping.getId(),
+                            mapping.getSortOrder(),
+                            primaryImageUrl
+                    );
+                })
                 .collect(Collectors.toList());
     }
 
@@ -51,12 +67,19 @@ public class CategoryProductTemplateService {
     public List<CategoryProductTemplateDto> getByParentCategoryId(Long parentCategoryId) {
         List<CategoryProductTemplateMapping> mappings = mappingRepository.findByParentCategoryIdWithDetails(parentCategoryId);
         return mappings.stream()
-                .map(mapping -> CategoryProductTemplateDto.from(
-                        mapping.getCategory(),
-                        mapping.getProductTemplate(),
-                        mapping.getId(),
-                        mapping.getSortOrder()
-                ))
+                .map(mapping -> {
+                    String primaryImageUrl = productTemplateAttachmentRepository
+                            .findPrimaryByTemplateId(mapping.getProductTemplate().getId())
+                            .map(pa -> pa.getAttachment().getFileUrl())
+                            .orElse(null);
+                    return CategoryProductTemplateDto.from(
+                            mapping.getCategory(),
+                            mapping.getProductTemplate(),
+                            mapping.getId(),
+                            mapping.getSortOrder(),
+                            primaryImageUrl
+                    );
+                })
                 .collect(Collectors.toList());
     }
 
@@ -77,16 +100,24 @@ public class CategoryProductTemplateService {
                     CategoryProductTemplateMapping firstMapping = entry.getValue().get(0);
                     List<ProductTemplateDto> productTemplates = entry.getValue().stream()
                             .sorted((a, b) -> Integer.compare(a.getSortOrder(), b.getSortOrder()))
-                            .map(mapping -> ProductTemplateDto.builder()
-                                    .id(mapping.getProductTemplate().getId())
-                                    .name(mapping.getProductTemplate().getName())
-                                    .description(mapping.getProductTemplate().getDescription())
-                                    .status(mapping.getProductTemplate().getStatus() != null 
-                                            ? mapping.getProductTemplate().getStatus().name() 
-                                            : null)
-                                    .sortOrder(mapping.getSortOrder())
-                                    .mappingId(mapping.getId())
-                                    .build())
+                            .map(mapping -> {
+                                String primaryImageUrl = productTemplateAttachmentRepository
+                                        .findPrimaryByTemplateId(mapping.getProductTemplate().getId())
+                                        .map(pa -> pa.getAttachment().getFileUrl())
+                                        .orElse(null);
+                                
+                                return ProductTemplateDto.builder()
+                                        .id(mapping.getProductTemplate().getId())
+                                        .name(mapping.getProductTemplate().getName())
+                                        .description(mapping.getProductTemplate().getDescription())
+                                        .status(mapping.getProductTemplate().getStatus() != null 
+                                                ? mapping.getProductTemplate().getStatus().name() 
+                                                : null)
+                                        .sortOrder(mapping.getSortOrder())
+                                        .mappingId(mapping.getId())
+                                        .primaryImageUrl(primaryImageUrl)
+                                        .build();
+                            })
                             .collect(Collectors.toList());
                     
                     return CategoryWithProductTemplatesDto.builder()
@@ -123,16 +154,24 @@ public class CategoryProductTemplateService {
         CategoryProductTemplateMapping firstMapping = mappings.get(0);
         List<ProductTemplateDto> productTemplates = mappings.stream()
                 .sorted((a, b) -> Integer.compare(a.getSortOrder(), b.getSortOrder()))
-                .map(mapping -> ProductTemplateDto.builder()
-                        .id(mapping.getProductTemplate().getId())
-                        .name(mapping.getProductTemplate().getName())
-                        .description(mapping.getProductTemplate().getDescription())
-                        .status(mapping.getProductTemplate().getStatus() != null 
-                                ? mapping.getProductTemplate().getStatus().name() 
-                                : null)
-                        .sortOrder(mapping.getSortOrder())
-                        .mappingId(mapping.getId())
-                        .build())
+                .map(mapping -> {
+                    String primaryImageUrl = productTemplateAttachmentRepository
+                            .findPrimaryByTemplateId(mapping.getProductTemplate().getId())
+                            .map(pa -> pa.getAttachment().getFileUrl())
+                            .orElse(null);
+                    
+                    return ProductTemplateDto.builder()
+                            .id(mapping.getProductTemplate().getId())
+                            .name(mapping.getProductTemplate().getName())
+                            .description(mapping.getProductTemplate().getDescription())
+                            .status(mapping.getProductTemplate().getStatus() != null 
+                                    ? mapping.getProductTemplate().getStatus().name() 
+                                    : null)
+                            .sortOrder(mapping.getSortOrder())
+                            .mappingId(mapping.getId())
+                            .primaryImageUrl(primaryImageUrl)
+                            .build();
+                })
                 .collect(Collectors.toList());
         
         return CategoryWithProductTemplatesDto.builder()
