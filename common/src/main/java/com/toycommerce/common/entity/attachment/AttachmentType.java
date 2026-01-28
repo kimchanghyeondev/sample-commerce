@@ -27,6 +27,13 @@ public enum AttachmentType {
     // 사용자 관련
     USER_PROFILE,           // 사용자 프로필 이미지
     
+    // 입점업체 관련
+    STORE_LOGO,             // 업체 로고
+    STORE_BANNER,           // 업체 배너
+    STORE_BUSINESS_LICENSE, // 사업자등록증
+    STORE_BANK_BOOK,        // 통장사본
+    STORE_STAMP,            // 인감/직인
+    
     // 기타
     ETC                     // 기타
 }

@@ -2,6 +2,7 @@ package com.toycommerce.common.entity.product;
 
 import com.toycommerce.common.entity.BaseEntity;
 import com.toycommerce.common.entity.enums.EntityStatus;
+import com.toycommerce.common.entity.store.Store;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,7 +13,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "product")
+@Table(name = "product", indexes = {
+        @Index(name = "idx_product_store", columnList = "store_id")
+})
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
@@ -26,6 +29,10 @@ public class Product extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_template_id", nullable = false, updatable = false)
     private ProductTemplate productTemplate;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "store_id")
+    private Store store;
 
     @Column(name = "name", nullable = false)
     private String name; // 예: "갈치조림", "갈치튀김"
