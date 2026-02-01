@@ -40,7 +40,7 @@ public class AuthService {
 
             // JWT 토큰 생성
             List<String> roles = List.of(user.getRole().name());
-            String token = jwtUtil.generateToken(username, roles);
+            String token = jwtUtil.generateToken(user.getId(), roles);
             
             return Map.of("token", token);
         } catch (RuntimeException e) {

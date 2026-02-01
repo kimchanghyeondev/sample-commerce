@@ -73,9 +73,9 @@ public class JwtUtil {
         }
     }
 
-    public String generateToken(String username, List<String> roles) {
+    public String generateToken(Long userId, List<String> roles) {
         return Jwts.builder()
-                .subject(username)
+                .subject(String.valueOf(userId))
                 .claim("roles", roles)
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + expiration))
