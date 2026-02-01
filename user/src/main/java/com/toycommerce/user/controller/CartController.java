@@ -38,8 +38,8 @@ public class CartController {
     @GetMapping
     @RequireAuth
     public ResponseEntity<CartDto> getCart() {
-        String username = getCurrentUsername();
-        CartDto cart = cartService.getCart(username);
+        Long userId = getCurrentUsername();
+        CartDto cart = cartService.getCart(userId);
         return ResponseEntity.ok(cart);
     }
 
@@ -53,8 +53,8 @@ public class CartController {
     @PostMapping("/items")
     @RequireAuth
     public ResponseEntity<CartItemDto> addItem(@Valid @RequestBody CartItemRequest request) {
-        String username = getCurrentUsername();
-        CartItemDto item = cartService.addItem(username, request);
+        Long userId = getCurrentUsername();
+        CartItemDto item = cartService.addItem(userId, request);
         return ResponseEntity.ok(item);
     }
 
@@ -70,8 +70,8 @@ public class CartController {
     public ResponseEntity<CartItemDto> updateItemQuantity(
             @Parameter(description = "장바구니 아이템 ID") @PathVariable Long cartItemId,
             @Valid @RequestBody CartItemUpdateRequest request) {
-        String username = getCurrentUsername();
-        CartItemDto item = cartService.updateItemQuantity(username, cartItemId, request);
+        Long userId = getCurrentUsername();
+        CartItemDto item = cartService.updateItemQuantity(userId, cartItemId, request);
         return ResponseEntity.ok(item);
     }
 
@@ -85,8 +85,8 @@ public class CartController {
     @RequireAuth
     public ResponseEntity<Map<String, String>> removeItem(
             @Parameter(description = "장바구니 아이템 ID") @PathVariable Long cartItemId) {
-        String username = getCurrentUsername();
-        cartService.removeItem(username, cartItemId);
+        Long userId = getCurrentUsername();
+        cartService.removeItem(userId, cartItemId);
         return ResponseEntity.ok(Map.of("message", "장바구니 아이템이 삭제되었습니다."));
     }
 
@@ -98,14 +98,14 @@ public class CartController {
     @DeleteMapping
     @RequireAuth
     public ResponseEntity<Map<String, String>> clearCart() {
-        String username = getCurrentUsername();
-        cartService.clearCart(username);
+        Long userId = getCurrentUsername();
+        cartService.clearCart(userId);
         return ResponseEntity.ok(Map.of("message", "장바구니가 비워졌습니다."));
     }
 
-    private String getCurrentUsername() {
+    private Long getCurrentUsername() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        return authentication.getName();
+        return Long.valueOf(authentication.getName());
     }
 }
 

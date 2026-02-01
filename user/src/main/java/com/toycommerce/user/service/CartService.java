@@ -34,8 +34,8 @@ public class CartService {
     /**
      * 사용자의 장바구니 조회 (점포별 그룹화)
      */
-    public CartDto getCart(String username) {
-        User user = findUserByUsername(username);
+    public CartDto getCart(Long userId) {
+        User user = findUserByUsername(userId);
         Cart cart = findOrCreateCart(user);
         return buildCartDto(cart);
     }
@@ -126,8 +126,8 @@ public class CartService {
      * 장바구니에 상품 추가
      */
     @Transactional
-    public CartItemDto addItem(String username, CartItemRequest request) {
-        User user = findUserByUsername(username);
+    public CartItemDto addItem(Long userId, CartItemRequest request) {
+        User user = findUserByUsername(userId);
         Cart cart = findOrCreateCart(user);
         
         ProductOption productOption = productOptionRepository.findById(request.getProductOptionId())
@@ -166,8 +166,8 @@ public class CartService {
      * 장바구니 아이템 수량 수정
      */
     @Transactional
-    public CartItemDto updateItemQuantity(String username, Long cartItemId, CartItemUpdateRequest request) {
-        User user = findUserByUsername(username);
+    public CartItemDto updateItemQuantity(Long userId, Long cartItemId, CartItemUpdateRequest request) {
+        User user = findUserByUsername(userId);
         Cart cart = findCartByUser(user);
 
         CartItem cartItem = cartItemRepository.findById(cartItemId)
@@ -191,8 +191,8 @@ public class CartService {
      * 장바구니 아이템 삭제
      */
     @Transactional
-    public void removeItem(String username, Long cartItemId) {
-        User user = findUserByUsername(username);
+    public void removeItem(Long userId, Long cartItemId) {
+        User user = findUserByUsername(userId);
         Cart cart = findCartByUser(user);
 
         CartItem cartItem = cartItemRepository.findById(cartItemId)
@@ -213,8 +213,8 @@ public class CartService {
      * 장바구니 비우기
      */
     @Transactional
-    public void clearCart(String username) {
-        User user = findUserByUsername(username);
+    public void clearCart(Long userId) {
+        User user = findUserByUsername(userId);
         Cart cart = findCartByUser(user);
 
         cart.getCartItems().clear();
@@ -223,9 +223,9 @@ public class CartService {
         log.info("장바구니 비우기: userId={}", user.getId());
     }
 
-    private User findUserByUsername(String username) {
-        return userRepository.findByUsername(username)
-                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다: " + username));
+    private User findUserByUsername(Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다: " + userId));
     }
 
     private Cart findCartByUser(User user) {
