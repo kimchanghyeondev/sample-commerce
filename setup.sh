@@ -7,7 +7,7 @@ echo "========================================="
 
 # Docker 설치 여부 확인
 if ! command -v docker &> /dev/null; then
-    echo "[1/5] Docker 설치 중..."
+    echo "[1/6] Docker 설치 중..."
     sudo apt-get update
     sudo apt-get install -y ca-certificates curl
     sudo install -m 0755 -d /etc/apt/keyrings
@@ -24,34 +24,38 @@ if ! command -v docker &> /dev/null; then
     sudo usermod -aG docker $USER
     echo "Docker 설치 완료. docker 그룹 적용을 위해 재로그인이 필요할 수 있습니다."
 else
-    echo "[1/5] Docker 이미 설치됨 - 건너뜀"
+    echo "[1/6] Docker 이미 설치됨 - 건너뜀"
 fi
 
 # Docker 서비스 실행 확인
 if sudo systemctl is-active --quiet docker 2>/dev/null; then
-    echo "[2/5] Docker 서비스 실행 중 - 건너뜀"
+    echo "[2/6] Docker 서비스 실행 중 - 건너뜀"
 elif sudo systemctl is-active --quiet snap.docker.dockerd 2>/dev/null; then
-    echo "[2/5] Docker 서비스 실행 중 (snap) - 건너뜀"
+    echo "[2/6] Docker 서비스 실행 중 (snap) - 건너뜀"
 elif sudo systemctl list-unit-files | grep -q snap.docker.dockerd; then
-    echo "[2/5] Docker 서비스 시작 (snap)..."
+    echo "[2/6] Docker 서비스 시작 (snap)..."
     sudo systemctl start snap.docker.dockerd
     sudo systemctl enable snap.docker.dockerd
 else
-    echo "[2/5] Docker 서비스 시작..."
+    echo "[2/6] Docker 서비스 시작..."
     sudo systemctl start docker
     sudo systemctl enable docker
 fi
 
+# 최신 코드 Pull
+echo "[3/6] 최신 코드 Pull..."
+git pull origin main
+
 # JDK 17 설치 여부 확인
 if ! command -v java &> /dev/null; then
-    echo "[3/5] JDK 17 설치 중..."
+    echo "[4/6] JDK 17 설치 중..."
     sudo apt-get install -y openjdk-17-jdk
 else
-    echo "[3/5] JDK 이미 설치됨 - 건너뜀"
+    echo "[4/6] JDK 이미 설치됨 - 건너뜀"
 fi
 
 # Gradle 빌드 (1회)
-echo "[4/5] Gradle 빌드 중..."
+echo "[5/6] Gradle 빌드 중..."
 chmod +x ./gradlew 2>/dev/null || true
 if [ -f "./gradlew" ]; then
     ./gradlew clean build -x test --no-daemon
@@ -60,7 +64,7 @@ else
 fi
 
 # Docker Compose 실행
-echo "[5/5] 기존 컨테이너 정리 후 실행..."
+echo "[6/6] 기존 컨테이너 정리 후 실행..."
 docker compose down 2>/dev/null || true
 docker compose up --build -d
 
