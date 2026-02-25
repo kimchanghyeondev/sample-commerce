@@ -28,12 +28,18 @@ else
 fi
 
 # Docker 서비스 실행 확인
-if ! sudo systemctl is-active --quiet docker; then
+if sudo systemctl is-active --quiet docker 2>/dev/null; then
+    echo "[2/5] Docker 서비스 실행 중 - 건너뜀"
+elif sudo systemctl is-active --quiet snap.docker.dockerd 2>/dev/null; then
+    echo "[2/5] Docker 서비스 실행 중 (snap) - 건너뜀"
+elif sudo systemctl list-unit-files | grep -q snap.docker.dockerd; then
+    echo "[2/5] Docker 서비스 시작 (snap)..."
+    sudo systemctl start snap.docker.dockerd
+    sudo systemctl enable snap.docker.dockerd
+else
     echo "[2/5] Docker 서비스 시작..."
     sudo systemctl start docker
     sudo systemctl enable docker
-else
-    echo "[2/5] Docker 서비스 실행 중 - 건너뜀"
 fi
 
 # JDK 17 설치 여부 확인
