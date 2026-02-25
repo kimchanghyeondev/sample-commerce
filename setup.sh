@@ -66,7 +66,8 @@ fi
 # Docker Compose 실행
 echo "[6/6] 기존 컨테이너 정리 후 실행..."
 docker compose down 2>/dev/null || true
-docker compose up --build -d
+docker compose build --no-cache
+docker compose up -d
 
 echo ""
 echo "========================================="
