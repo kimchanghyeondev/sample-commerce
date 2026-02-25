@@ -15,40 +15,65 @@ services:
       - --collation-server=utf8mb4_unicode_ci
     volumes:
       - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
-  zookeeper:
-    image: confluentinc/cp-zookeeper:7.5.0
-    container_name: zookeeper
+  user-service:
+    build:
+      context: .
+      args:
+        MODULE: user
+    container_name: user-service
     ports:
-      - "2181:2181"
+      - "8081:8081"
     environment:
-      ZOOKEEPER_CLIENT_PORT: 2181
-      ZOOKEEPER_TICK_TIME: 2000
-
-  kafka:
-    image: confluentinc/cp-kafka:7.5.0
-    container_name: kafka
-    ports:
-      - "9092:9092"
-    environment:
-      KAFKA_BROKER_ID: 1
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/toy_commerce?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=Asia/Seoul&characterEncoding=UTF-8&zeroDateTimeBehavior=CONVERT_TO_NULL&allowPublicKeyRetrieval=true
     depends_on:
-      - zookeeper
+      mysql:
+        condition: service_healthy
 
-  kafka-ui:
-    image: provectuslabs/kafka-ui:latest
-    container_name: kafka-ui
+  admin-service:
+    build:
+      context: .
+      args:
+        MODULE: admin
+    container_name: admin-service
     ports:
-      - "9000:8080"
+      - "8082:8082"
     environment:
-      KAFKA_CLUSTERS_0_NAME: local
-      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9092
-      KAFKA_CLUSTERS_0_ZOOKEEPER: zookeeper:2181
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/toy_commerce?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=Asia/Seoul&characterEncoding=UTF-8&zeroDateTimeBehavior=CONVERT_TO_NULL&allowPublicKeyRetrieval=true
     depends_on:
-      - kafka
+      mysql:
+        condition: service_healthy
+
+  gateway-service:
+    build:
+      context: .
+      args:
+        MODULE: gateway
+    container_name: gateway-service
+    ports:
+      - "8000:8000"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/toy_commerce?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=Asia/Seoul&characterEncoding=UTF-8&zeroDateTimeBehavior=CONVERT_TO_NULL&allowPublicKeyRetrieval=true
+      SPRING_CLOUD_GATEWAY_ROUTES_0_ID: user-service
+      SPRING_CLOUD_GATEWAY_ROUTES_0_URI: http://user-service:8081
+      SPRING_CLOUD_GATEWAY_ROUTES_0_PREDICATES_0: Path=/api/user/**
+      SPRING_CLOUD_GATEWAY_ROUTES_0_FILTERS_0: StripPrefix=0
+      SPRING_CLOUD_GATEWAY_ROUTES_1_ID: admin-service
+      SPRING_CLOUD_GATEWAY_ROUTES_1_URI: http://admin-service:8082
+      SPRING_CLOUD_GATEWAY_ROUTES_1_PREDICATES_0: Path=/api/admin/**
+      SPRING_CLOUD_GATEWAY_ROUTES_1_FILTERS_0: StripPrefix=1
+    depends_on:
+      mysql:
+        condition: service_healthy
+      user-service:
+        condition: service_started
+      admin-service:
+        condition: service_started
 
 volumes:
   mysql_data:
