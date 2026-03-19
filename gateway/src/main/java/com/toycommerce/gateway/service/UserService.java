@@ -45,5 +45,25 @@ public class UserService {
 
         return userRepository.save(user);
     }
+
+    @Transactional
+    public User createOrUpdateUser(String username, String password, Role role) {
+        Optional<User> existingUser = userRepository.findByUsername(username);
+        
+        if (existingUser.isPresent()) {
+            User user = existingUser.get();
+            user.updatePassword(passwordEncoder.encode(password));
+            return userRepository.save(user);
+        }
+
+        User user = User.builder()
+                .username(username)
+                .password(passwordEncoder.encode(password))
+                .role(role)
+                .enabled(true)
+                .build();
+
+        return userRepository.save(user);
+    }
 }
 

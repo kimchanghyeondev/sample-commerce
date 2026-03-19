@@ -31,15 +31,15 @@ public class JwtAuthenticationFilter implements WebFilter {
         ServerHttpRequest request = exchange.getRequest();
         String path = request.getURI().getPath();
 
-        // 인증이 필요 없는 경로는 통과
+        // 공개 API는 JWT 검증 없이 통과 (SecurityConfig에서 permitAll 처리)
+        // /api/user/**는 user 모듈의 @RequireAuth/@RequireRole 어노테이션으로 인증/인가 처리
         if (path.startsWith("/api/auth") || 
-            path.startsWith("/api/categories") || 
-            path.startsWith("/api/category-product-templates") ||
-            path.startsWith("/api/product-templates") ||
-            path.startsWith("/actuator")) {
+            path.startsWith("/actuator") ||
+            path.startsWith("/api/user")) {
             return chain.filter(exchange);
         }
 
+        // JWT 토큰 추출
         String token = extractToken(request);
 
         if (token == null || !jwtUtil.validateToken(token)) {

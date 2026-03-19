@@ -4,6 +4,8 @@ server:
 spring:
   application:
     name: user-service
+#  kafka:
+#    bootstrap-servers: localhost:9092
   datasource:
     url: jdbc:mysql://localhost:3306/toy_commerce?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=Asia/Seoul&characterEncoding=UTF-8&zeroDateTimeBehavior=CONVERT_TO_NULL&allowPublicKeyRetrieval=true
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -21,4 +23,16 @@ spring:
 jwt:
   secret: your-256-bit-secret-key-for-hmac-sha256-algorithm-minimum-32-characters
   expiration: 86400000
+
+# Swagger/OpenAPI 설정
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+    tags-sorter: alpha
+    operations-sorter: alpha
+  api-docs:
+    path: /v3/api-docs
+  show-actuator: false
+  default-consumes-media-type: application/json
+  default-produces-media-type: application/json
 

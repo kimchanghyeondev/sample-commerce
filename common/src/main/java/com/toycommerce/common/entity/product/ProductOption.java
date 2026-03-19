@@ -21,10 +21,6 @@ public class ProductOption extends BaseEntity {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "product_template_id", nullable = false, updatable = false)
-    private ProductTemplate productTemplate;
-
-    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_option_group_id", nullable = false, updatable = false)
     private ProductOptionGroup productOptionGroup;
 
@@ -32,6 +28,15 @@ public class ProductOption extends BaseEntity {
     private String name;
 
     @Enumerated(EnumType.STRING)
-    private EntityStatus entityStatus;
+    @Column(name = "status")
+    @Builder.Default
+    private EntityStatus status = EntityStatus.ACTIVE;
 
+    public void updateName(String name) {
+        this.name = name;
+    }
+
+    public void updateStatus(EntityStatus status) {
+        this.status = status;
+    }
 }

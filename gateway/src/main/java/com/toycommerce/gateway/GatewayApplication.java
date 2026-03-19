@@ -19,7 +19,8 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 })
 @ComponentScan(basePackages = {
         "com.toycommerce.gateway",
-        "com.toycommerce.common.*"
+        "com.toycommerce.common.config",
+        "com.toycommerce.common.util"
 })
 @EntityScan(basePackages = "com.toycommerce.common.entity")
 @EnableJpaRepositories(basePackages = "com.toycommerce.gateway.repository")

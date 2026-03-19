@@ -1,70 +1,50 @@
-# Gradle
-.gradle/
+.gradle
 build/
 !gradle/wrapper/gradle-wrapper.jar
+!**/src/main/**/build/
+!**/src/test/**/build/
 
-# IDE - IntelliJ IDEA
-.idea/
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+bin/
+!**/src/main/**/bin/
+!**/src/test/**/bin/
+
+### IntelliJ IDEA ###
+.idea
+*.iws
 *.iml
 *.ipr
-*.iws
 out/
+!**/src/main/**/out/
+!**/src/test/**/out/
 
-# IDE - Eclipse
-.classpath
-.project
-.settings/
-bin/
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
 
-# IDE - VS Code
+### VS Code ###
 .vscode/
 
-# Java
-*.class
-*.jar
-*.war
-*.ear
-*.log
-hs_err_pid*
-
-# Spring Boot
-*.pid
-
-# Application properties with secrets
-application-local.yml
-application-prod.yml
-**/src/main/resources/application-local.yml
-**/src/main/resources/application-prod.yml
-
-# Environment variables
-.env
-.env.local
-.env.*.local
-*.env
-
-# OS
-.DS_Store
-Thumbs.db
-
-# Logs
-logs/
-*.log
-npm-debug.log*
-
-# Test output
-**/test-output/
-**/surefire-reports/
-
-# Temporary files
-*.tmp
-*.bak
-*.swp
-*~
-
-# Database
-*.h2.db
+### H2 Database ###
+*.db
 *.mv.db
 *.trace.db
+
+
+# Uploaded files
+uploads/
+
+# Local data
 .mysql-data/
 
 # Local tools
