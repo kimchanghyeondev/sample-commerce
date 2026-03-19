@@ -2,9 +2,8 @@ package com.toycommerce.gateway.exception;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.toycommerce.common.dto.ErrorResponse;
+import com.toycommerce.common.exception.ErrorResponse;
 import com.toycommerce.common.exception.BusinessException;
-import com.toycommerce.common.exception.ErrorCode;
 import com.toycommerce.common.exception.ForbiddenException;
 import com.toycommerce.common.exception.UnauthorizedException;
 import lombok.RequiredArgsConstructor;
@@ -30,22 +29,28 @@ public class GlobalExceptionHandler implements ErrorWebExceptionHandler {
     public Mono<Void> handle(ServerWebExchange exchange, Throwable ex) {
         HttpStatus status;
         ErrorResponse errorResponse;
+        String path = exchange.getRequest().getURI().getPath();
 
         if (ex instanceof UnauthorizedException e) {
             status = HttpStatus.UNAUTHORIZED;
-            errorResponse = ErrorResponse.of(e.getErrorCode());
+            errorResponse = ErrorResponse.of(e.getErrorCode(), e.getMessage(), e.isShowMessage(), path);
             log.warn("Unauthorized: {}", e.getMessage());
         } else if (ex instanceof ForbiddenException e) {
             status = HttpStatus.FORBIDDEN;
-            errorResponse = ErrorResponse.of(e.getErrorCode());
+            errorResponse = ErrorResponse.of(e.getErrorCode(), e.getMessage(), e.isShowMessage(), path);
             log.warn("Forbidden: {}", e.getMessage());
         } else if (ex instanceof BusinessException e) {
             status = HttpStatus.BAD_REQUEST;
-            errorResponse = ErrorResponse.of(e.getErrorCode());
+            errorResponse = ErrorResponse.of(e.getErrorCode(), e.getMessage(), e.isShowMessage(), path);
             log.warn("Business exception: {}", e.getMessage());
         } else {
             status = HttpStatus.INTERNAL_SERVER_ERROR;
-            errorResponse = ErrorResponse.of(ErrorCode.INTERNAL_ERROR);
+            errorResponse = ErrorResponse.of(
+                    "INTERNAL_SERVER_ERROR",
+                    "서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.",
+                    false,
+                    path
+            );
             log.error("Unexpected error occurred", ex);
         }
 
